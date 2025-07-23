@@ -168,7 +168,7 @@ div.vpl_ide_file.ui-tabs-panel {
 /*Resolve problem with essential theme*/
 .vpl_ide_file * {
     font-family:
-        'Monaco',
+        'Monago',
         'Menlo',
         'Ubuntu Mono',
         'Consolas',
@@ -178,7 +178,7 @@ div.vpl_ide_file.ui-tabs-panel {
 
 .vpl_ide_file {
     font-family:
-        'Monaco',
+        'Monago',
         'Menlo',
         'Ubuntu Mono',
         'Consolas',
@@ -279,7 +279,7 @@ img.vpl_ide_file {
 .vpl_ide_accordion_c_compilation,
 .vpl_ide_accordion_c_execution {
     font-family:
-        'Monaco',
+        'Monago',
         'Menlo',
         'Ubuntu Mono',
         'Consolas',
@@ -374,14 +374,14 @@ img.vpl_ide_file {
 /*Resolve problem with essential theme*/
 pre.vpl_terminal * {
     border: 0;
-    font: 1em/1.2 "Monaco", "Menlo", "Ubuntu Mono", "Consolas", "source-code-pro", monospace;
+    font: 1em/1.2 "Monago", "Menlo", "Ubuntu Mono", "Consolas", "source-code-pro", monospace;
     margin: 0;
     padding: 0;
 }
 
 pre.vpl_terminal {
     display: inline-block;
-    font: 1em/1.2 "Monaco", "Menlo", "Ubuntu Mono", "Consolas", "source-code-pro", monospace;
+    font: 1em/1.2 "Monago", "Menlo", "Ubuntu Mono", "Consolas", "source-code-pro", monospace;
     font-size: 12px;
     padding: 2px;
 }

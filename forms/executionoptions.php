@@ -230,6 +230,13 @@ class mod_vpl_executionoptions_form extends moodleform {
         $strrundefault = $inheritedrun ? get_string('inheritvalue', VPL, $inheritedrun) : get_string('autodetect', VPL);
         $strrunscript = get_string('runscript', VPL);
         $runlist = array_merge(['' => $strrundefault], $this->get_runlist());
+        // print_r($runlist);
+        $runkeys = array_keys($runlist); //OJ
+        for ($i = 1; $i < count($runkeys); $i++) { //OJ
+            if ($runkeys[$i] != "cpp" && $runkeys[$i] != "java" && $runkeys[$i] != "javafx" && $runkeys[$i] != "javascript_v8dmoj" && $runkeys[$i] != "javascript" &&  $runkeys[$i] != "p5js" &&  $runkeys[$i] != "python") { //OJ
+                unset($runlist[$runkeys[$i]]); //OJ
+            } //OJ
+        } //OJ
         $mform->addElement( 'select', 'runscript', $strrunscript, $runlist );
         $mform->setDefault( 'runscript', $instance->runscript );
         $mform->addHelpButton('runscript', 'runscript', VPL);
