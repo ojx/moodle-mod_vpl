@@ -22,7 +22,12 @@ Execution scripts added to /jail/default_scripts:
 Execution scripts edited in /jail/default_scripts:
 - python_run.sh
 
-GFX for C++ unfinsihed development in this project:
+Edited: /amd/src/vplide.js
+Check and then minimize to:
+/ams/build/vplide.min.js
+Use this tool: https://www.digitalocean.com/community/tools/minify
+
+GFX for C++ unfinished development in this project:
 https://compsci.tools/mod/vpl/view.php?id=261
 
 Also need to experiment with CMU Graphics.

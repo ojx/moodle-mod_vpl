@@ -2160,11 +2160,19 @@ define(
                                     focusCurrentFile();
                                 });
                     } else if (type == "browser") {
+                        let diag = document.querySelector("div.vpl_vnc.vpl_ide");
+                        let term = document.querySelector("div.vpl_vnc.vpl_ide #vpl_dialog_terminal #vpl_terminal div.terminal");
+                        //  term.style.opacity = 0.9;
+                        // term.style.backgroundColor = '#2D2D2D';
+                        //diag.style.opacity = 0.9;
+                        // diag.style.display = "none";
+
                         var URL = (coninfo.secure ? "https" : "http") + "://" + coninfo.server + ":" + coninfo.portToUse + "/";
                         URL += VPLUtil.sanitizeText(parsed[2]) + "/httpPassthrough";
                         if (isTeacher) {
-                            URL += "?private";
+                     //       URL += "?private";  //OJ Why
                         }
+                        /*
                         var message = '<a href="' + URL + '" target="_blank">';
                         message += VPLUtil.str('open') + '</a>';
                         var options = {
@@ -2173,6 +2181,115 @@ define(
                             title: VPLUtil.str('run'),
                         };
                         showMessage(message, options);
+                        */
+                        if (typeof win !== 'undefined' && !win.closed) {
+                            win.close();
+                            diag.style.display = "block";
+                        }
+                        //   if (typeof win === 'undefined' || win.closed) {
+                        //   let rect = diag.getBoundingClientRect();
+
+                        let scale = window.devicePixelRatio;
+                        let winW = 520;
+                        let winH = 300;
+
+                        const y = window.top.outerHeight / 2 + window.top.screenY - (winH / 2);
+                        const x = window.top.outerWidth / 2 + window.top.screenX - (winW / 2);
+                        var win = window.open(URL, "p5js", `toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${winW}, height=${winH}, top=${y}, left=${x}`);
+                        //   }
+
+                        let _buffer = [];
+                        let _appReady = false;
+
+                        let iv = setInterval(()=>{
+                            if (typeof win !== 'undefined' && !win.closed) {
+                                win.postMessage({status: "ok"}, "*");
+                            }
+                        }, 30);
+
+                        diag.style.display = "none";
+
+                        lastConsole.write("\033[2J"); // clear screen?
+                        lastConsole.write("\033[H"); // move cursor home?
+                        lastConsole.write("\033[s"); // save cursor
+                        //console.log("client");
+                        //console.log(VNCClient);
+                        // console.log(VPLUtil.str);
+
+                        window.onmessage = function(ev) {
+                            if (ev.data) {
+                                if (ev.data === 'closing') {
+                                    lastConsole.write("\033[2J"); // clear screen?
+                                    lastConsole.write("\033[H"); // move cursor home?
+                                    lastConsole.write("\033[s"); // save cursor
+                                    lastConsole.close();
+                                } else if (ev.data === 'done') {
+                                    clearInterval(iv);
+                                    _appReady = true;
+                                    lastConsole.write("\033[2J"); // clear screen?
+                                    lastConsole.write("\033[H"); // move cursor home?
+
+                                    if (_buffer.length > 0) {
+                                        diag.style.display = "block";
+
+                                        for (const _line of _buffer) {
+                                            lastConsole.write(_line);
+                                            lastConsole.write("\r\n");
+                                        }
+                                        _buffer = [];
+                                    }
+                                    lastConsole.write("\033[s"); // save cursor
+                                } else if (ev.data.con && ev.data.args) {
+                                    if (_appReady === true) {
+                                        if (diag.style.display === 'none') {
+                                            diag.style.display = "block";
+                                            lastConsole.write("\033[2J"); // clear screen?
+                                            lastConsole.write("\033[H"); // move cursor home?
+                                            lastConsole.write("\033[s"); // save cursor
+                                        } else {
+                                            lastConsole.write("\033[u"); // restore cursor
+                                            lastConsole.write("\033[0J"); // remove all after cursor
+                                        }
+                                    }
+
+                                    let args = JSON.parse(ev.data.args)
+                                    // console.log(args);
+                                    console.log(lastConsole);
+
+                                    _msg = args["0"];
+
+                                    if (typeof _msg !== 'string') {
+                                        _msg =JSON.stringify(args["0"]);
+                                    }
+
+                                    if (ev.data.con === 'log') {
+                                        if (_appReady === false) {
+                                            _buffer.push(_msg);
+                                        } else {
+                                            lastConsole.write(_msg + "\r\n");
+                                        }
+                                        // console.log(args["0"]);
+                                    } else if (ev.data.con === 'warn') {
+                                        if (_appReady === false) {
+                                            _buffer.push("\033[33m" + "Warning: " + _msg + "\033[37m");
+                                        } else {
+                                            lastConsole.write("\033[33m" + "Warning: " + _msg + "\033[37m" + "\r\n");
+                                        }
+                                        console.warn(args["0"]);
+                                    } else if (ev.data.con === 'error') {
+                                        if (_appReady === false) {
+                                            _buffer.push("\033[91m" + "ERROR: " + _msg + "\033[37m");
+                                        } else {
+                                            lastConsole.write("\033[91m" + "ERROR: " + _msg + "\033[37m" + "\r\n");
+                                        }
+                                        console.warn(args["0"]);
+                                    }
+                                    if (_appReady === true) {
+                                        lastConsole.write("\033[s"); // save cursor
+                                    }
+                                }
+                            }
+                        };
                     } else {
                         VPLUtil.log("Type of run error " + content, true);
                     }
